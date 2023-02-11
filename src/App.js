@@ -1,54 +1,49 @@
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import MovieCard from './MovieCard';
-
-import './App.css';
 import SearchIcon from './search.svg';
+import './App.css';
 
 // 53a128df
-
-const API_URL = 'http://www.omdbapi.com/?apikey=53a128df';
-
-const movie1 = {
-    Title: 'Pathaan',
-    Year: '2023',
-    imdbID: 'tt12844910',
-    Type: 'movie',
-    Poster: 'https://m.media-amazon.com/images/M/MV5BM2QzM2JiNTMtYjU4Ny00MDZkLTk3MmUtYTRjMzVkZGJlNmYyXkEyXkFqcGdeQXVyMTUzNTgzNzM0._V1_SX300.jpg',
-};
+const API_URL = 'http://www.omdbapi.com?apikey=53a128df';
 
 const App = () => {
+    const [searchTerm, setSearchTerm] = useState('');
     const [movies, setMovies] = useState([]);
+
+    useEffect(() => {
+        searchMovies('Batman');
+    }, []);
 
     const searchMovies = async (title) => {
         const response = await fetch(`${API_URL}&s=${title}`);
         const data = await response.json();
 
-        console.log(data.Search[0]);
         setMovies(data.Search);
     };
-
-    useEffect(() => {
-        searchMovies('pathaan');
-    }, []);
 
     return (
         <div className="app">
             <h1>MovieLand</h1>
 
             <div className="search">
-                <input placeholder="Search for movies" value="superman" onChange={() => {}}></input>
-                <img src={SearchIcon} alt="search" onClick={() => {}} />
+                <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search for movies" />
+                <img src={SearchIcon} alt="search" onClick={() => searchMovies(searchTerm)} />
             </div>
 
-            <div className="container">
-                <MovieCard movie1={movies[0]} />
-            </div>
+            {movies?.length > 0 ? (
+                <div className="container">
+                    {movies.map((movie) => (
+                        <MovieCard movie={movie} />
+                    ))}
+                </div>
+            ) : (
+                <div className="empty">
+                    <h2>No movies found</h2>
+                </div>
+            )}
         </div>
     );
 };
 
 export default App;
-
-// resume at 1:03
